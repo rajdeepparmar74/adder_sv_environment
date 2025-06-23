@@ -1,16 +1,16 @@
-class agent ;
-	//Handle of sequencer, driver, monitor as a container class named as
-	//agent
+class agent;
 	sequencer seq;
 	driver drv;
 	monitor mon;
 
-	function new(string name );
-		seq = new("seq" );
-		drv = new("drv" );
-		mon = new("mon" );
-		//Connection to driver's reference handle to sequencer
-		drv.seq_drv_h = seq;
-	endfunction
+	//handle of mailbox for instance for seq->drv
+	mailbox seq_drv_mbox;
+
+	function new();
+		this.seq_drv_mbox = new();
+		seq = new(seq_drv_mbox);
+		drv = new(seq_drv_mbox);
+		mon = new();
+	endfunction 
 
 endclass : agent

@@ -1,26 +1,28 @@
-class driver ;
-	//reference handle of the sequencer for connection at the agent
-	sequencer seq_drv_h;
-	
-	//Handle of interface for sending the data to DUT
+class driver;
+	//handle of sequencer
+	sequence_item sequence_item_h;
+
+	//handle of interface
 	virtual interface my_if vif;
 
-	//Handle of the packet for get_next_item
-	sequence_item seq_item;
-	//Constructor for hierarchy
-	function new(string name );
+	//handle of mailbox
+	mailbox seq_drv_mbox;
+
+	//constructor
+	function new(mailbox seq_drv_mbox);
+		this.seq_drv_mbox = seq_drv_mbox;
 	endfunction
 
-	//run task to get the item from the sequencer and send it to DUT
-	task run(int runs); 
-		repeat(runs) begin 
-			seq_drv_h.get_next_item(seq_item);
-			vif.send_to_dut(seq_item);
-			`ifdef driver_print
-				$display("[Packet from driver]: %0p", seq_item);
-			`endif
-		end //repeat loop
+	//run task
+	task run();
+		forever begin
+			seq_drv_mbox.get(sequence_item_h);
+			vif.send_to_dut(sequence_item_h);
 
+			`ifdef driver_print
+				$display("[Packet from driver at time=%0t]: %p", $time, sequence_item_h);
+			`endif
+		end // forever
 	endtask : run
-		
+
 endclass : driver

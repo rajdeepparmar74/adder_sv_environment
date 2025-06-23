@@ -1,22 +1,24 @@
-class monitor ;
-	//Handle of sequence_item
-	sequence_item seq_item;
+class monitor;
+	//handle of sequence
+	sequence_item sequence_item_h;
 
-	//Handle of interface for collecting data and connection to DUT
+	//handle of interface
 	virtual interface my_if vif;
 
-	//Constructor containing super.new for hierarchy
-	function new(string name );
-	endfunction 
+	//constructor
+	function new();
+	endfunction
 
-	//run task to collect the data from the DUT via interface
+	//run task
 	task run();
 		forever begin
-		vif.collect_pkt(seq_item);
-		`ifdef monitor_print
-			$display("[Packet from Monitor]: %0p", seq_item);
-		`endif
-		end //forever loop
+			vif.collect_pkt(sequence_item_h);
+
+			`ifdef monitor_print
+				$display("[Packet from monitor at time=%t]: %p", $time, sequence_item_h);
+			`endif 
+
+		end // forever
 	endtask : run
 
 endclass : monitor

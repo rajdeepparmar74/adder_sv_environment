@@ -1,31 +1,31 @@
-class verification_component ;
-	//Handle of virtual interface for configuration
+class verification_component;
+	//handle of sequence_item
+	sequence_item sequence_item_h;
+
+	//handle of interface
 	virtual interface my_if vif;
 	
-	//Handle of sequence_item
-	sequence_item seq_item;
-
-	//Handle of agent
+	//handle of agent
 	agent agn;
 
-	//Constructor
-	function new(string name );
-		//create an instance of agent
-		agn = new("agn1" );
-	endfunction 
+	//constructor
+	function new();
+		agn = new();
+	endfunction
 
-	//configuration function
-	function configure(virtual interface my_if vif);
+	//configure task
+	task configure(virtual interface my_if vif);
 		agn.drv.vif = vif;
 		agn.mon.vif = vif;
-	endfunction : configure
+	endtask : configure
 
-	//Run task to initiate the runs and spawn monitor process
-	task run (int runs);
+	//run task
+	task run();
 		fork
-			agn.mon.run();
+			agn.seq.run();
+			agn.drv.run();
 		join_none
-			agn.drv.run(runs);
+			agn.mon.run();
 	endtask : run
 
-endclass : verification_component
+endclass: verification_component

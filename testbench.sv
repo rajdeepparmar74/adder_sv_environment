@@ -1,28 +1,32 @@
 module testbench;
+
 logic clk;
 
-	//Handle of verification_component
-	verification_component verification_component_h;
+//interface instance
+my_if if0(clk);
 
-	//Instance of interface
-	my_if if0(clk);
+//verification component handle
+verification_component verification_component_h;
 
-	//Instance of DUT
-	adder u_adder(if0.in1, if0.in0, if0.sum_out, if0.carry_out);
+//dut instance
+adder u_dut(if0.in1, if0.in0, if0.sum_out, if0.carry_out);
 
-	initial begin
-		clk = 'b0;
-	end
+//initial for clk
+initial begin
+	clk = 'b0;
+	#200; $finish;
+end 
 
-	always begin
-		#5; clk = ~clk;
-	end //always 
+//clock generation
+always begin
+	#5; clk = ~clk;
+end
 
-	initial begin
-		verification_component_h = new("verification_component");
-		verification_component_h.configure(if0);
-		verification_component_h.run(5);
-		$finish;
-	end
+//initial block for vc and run vc's run task
+initial begin
+	verification_component_h = new();
+	verification_component_h.configure(if0);
+	verification_component_h.run();
+end
 
 endmodule : testbench
